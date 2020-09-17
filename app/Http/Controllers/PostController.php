@@ -4,74 +4,99 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
-use App\User;
 use App\Http\Requests\StoreUpdatePostRequest;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     private $post;
 
     public function __construct (Post $post){
-        
+
         $this->post = $post;
     }
 
     public function index()
-    { 
-        
-         $posts = $this->post->with(['comments','user'])->paginate(7);
-         return view('post.index',compact('posts'));       
-         
+    {
+         try {
+
+            $posts = $this->post->with(['comments','user'])->paginate(7);
+            return view('post.index',compact('posts'));
+
+         } catch (\Exception $e) {
+            return redirect()->back();
+         }
     }
 
     public function create()
-    {      
-       $id = \Auth::user()->id;
-        return view('post.create',compact('id'));
-         // s
+    {
+       $id = Auth::user()->id;
+       return view('post.create-edit',compact('id'));
+
     }
 
     public function store(StoreUpdatePostRequest $request)
-    {       
+    {
+         try {
 
-         $post=$this->post->create($request->all());
-        
-         return redirect()->route('posts.index')->withSuccess('cadastrou');
-         
+            $this->post->create($request->all());
+
+            return redirect()->route('posts.index')->with('success','Cadastrado');
+
+         } catch (\Exception $e) {
+            return redirect()->back();
+         }
+
     }
 
     public function show($id)
     {
-        $post = $this->post->with(['comments.user','user'])->find($id);
-        
-        return view('post.show',compact('post'));
+        try {
+
+            $post = $this->post->with(['comments.user','user'])->find($id);
+            return view('post.show',compact('post'));
+
+         } catch (\Exception $e) {
+            return redirect()->back();
+         }
     }
 
     public function edit($id)
     {
-        $post = $this->post->find($id);
-        return view('post.edit',compact('post'));
+        try {
+
+            $post = $this->post->find($id);
+            return view('post.create-edit',compact('post'));
+
+         } catch (\Exception $e) {
+            return redirect()->back();
+         }
 
     }
 
     public function update(StoreUpdatePostRequest $request, $id)
     {
-        
-        $datas = $request->all();
-        $target=$this->post->find($id);
-        $target->update($datas);
-  
-        return redirect()->route('posts.index')
-                        ->with('success','Product updated successfully');
-        
+        try {
+
+            $datas = $request->all();
+            $target=$this->post->find($id);
+            $target->update($datas);
+            return redirect()->route('posts.index');
+
+        } catch (\Exception $e) {
+            return redirect()->back();
+         }
     }
 
     public function destroy($id)
     {
-        $target=$this->post->find($id);
-        
-        $destroy =$target->delete();
-        
-        return redirect()->route('posts.index');
+        try {
+            $target=$this->post->find($id);
+            $destroy =$target->delete();
+            return redirect()->route('posts.index')->with('danger','Post apagado com sucesso');
+
+        } catch (\Exception $e) {
+            return redirect()->back();
+         }
     }
 }
