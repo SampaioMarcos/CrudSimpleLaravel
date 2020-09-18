@@ -20,6 +20,10 @@
 ## Comentários cadastrados!
 ![Comentario cadastrado em Post Específico](https://user-images.githubusercontent.com/46831962/73115599-15209800-3f07-11ea-83dc-a5879f7c970d.png)
 
+## Validação de campos do formulário de cadastro e atualização!
+![Captura de Tela (49)](https://user-images.githubusercontent.com/46831962/93605680-723cf280-f99d-11ea-8064-c13f8b18eb7e.png)
+
+
 
 
 
